@@ -1,0 +1,86 @@
+from flask import Flask, render_template, url_for
+from markupsafe import escape
+from datetime import datetime
+
+app = Flask(__name__)
+
+# Filtros personalizados
+
+#decorador
+@app.add_template_filter
+def today(date):
+    return date.strftime('%d-%m-%Y')
+
+#filtro
+#app.add_template_filter(today, 'today') otra forma de registrar al igual que el decorador de la linea 8 pero con filtro
+
+# function personalizada con decorador sin enviar por vista
+#con decorador
+@app.add_template_global
+def sum(n1:int, n2:int):
+    return n1 + n2
+
+#con filtro
+#app.add_template_filter(sum, 'sum') misma accion que lina 20/21
+
+def repeat(s, n):
+    return s * n
+
+# function personalizada
+def repeat(s, n):
+    return s * n
+
+@app.route('/')
+def index():
+    print(url_for('index'))
+    print(url_for('hello'))
+    print(url_for('code', code = 'print("Hola")'))
+    #name = 'Pablo'
+    name = None
+    friends = ['Alexandre', 'Roel', 'Juan', 'Pedro']
+    date = datetime.now()
+    return render_template(
+        'index.html', 
+        name = name, 
+        friends = friends, 
+        date = date,
+        repeat = repeat
+    )
+'''
+@app.route('/hello')
+def hello():
+    return f'<h1>Hola Mundo</h1>'
+'''
+
+
+@app.route('/hello')
+@app.route('/hello/<name>')
+@app.route('/hello/<string:name>/<int:age>')
+@app.route('/hello/<string:name>/<int:age>/<email>')
+def hello(name:str = None, age:int = None, email = None):
+    my_data = {
+        'name': name,
+        'age': age,
+        'email': email
+    }
+    return render_template('hello.html', data = my_data)
+'''
+@app.route('/hello')
+@app.route('/hello/<name>')
+@app.route('/hello/<string:name>/<int:age>/<email>')
+def hello_dinamic(name:str = None, age:int = None, email = None):
+    if name == None and age == None:
+        return f'<h1>Hola Mundo</h1>'
+    elif age == None:
+        return f'<h1>Hola, {name}!</h1>'
+    else:
+        return f'<h1>Hola {name}, el doble de tu edad es {age * 2}!</h1>'
+'''
+
+@app.route('/code/<path:code>')
+def code(code):
+    return f'<code>{escape(code)}<code>'
+
+#flask --app hello run (levantar servidor)
+#flask --app hello --debug run (levantar servidor con modo debug en el navegador)
+# .\env\Scripts\activate (activar entorno virtual)

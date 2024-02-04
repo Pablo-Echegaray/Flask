@@ -5,6 +5,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 
 app = Flask(__name__)
+app.config.from_mapping(
+    SECRET_KEY = 'dev'
+)
 
 # Filtros personalizados
 
@@ -93,17 +96,22 @@ class RegisterForm(FlaskForm):
 # Registrar usuario
 @app.route('/auth/register', methods = ['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    form = RegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        return f"Nombre de usuario: {username}, Contraseña: {password}"
+    # if request.method == 'POST':
+    #     username = request.form['username']
+    #     password = request.form['password']
         
-        if len(username) >= 4 and len(username) <= 25 and len(password) >= 6 and len(password) <= 40:
-            return f"Nombre de usuario: {username}, Contraseña: {password}"
-        else:
-            error = """Nombre de usuario debe tener entre 4 y 25 caracteres y la contraseña debe tener entre 6 y 40 caracteres.
-            """  
-            return render_template('auth/register.html', error = error)
-    return render_template('auth/register.html')
+    #     if len(username) >= 4 and len(username) <= 25 and len(password) >= 6 and len(password) <= 40:
+    #         return f"Nombre de usuario: {username}, Contraseña: {password}"
+    #     else:
+    #         error = """Nombre de usuario debe tener entre 4 y 25 caracteres y la contraseña debe tener entre 6 y 40 caracteres.
+    #         """  
+    #         return render_template('auth/register.html', form = form, error = error)
+    # return render_template('auth/register.html', form = form)
 
 #flask --app hello run (levantar servidor)
 #flask --app hello --debug run (levantar servidor con modo debug en el navegador)

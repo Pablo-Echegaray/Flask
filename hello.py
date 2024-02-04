@@ -3,6 +3,7 @@ from markupsafe import escape
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length
 
 app = Flask(__name__)
 app.config.from_mapping(
@@ -88,8 +89,8 @@ def code(code):
 
 # Crear formulario wtform
 class RegisterForm(FlaskForm):
-    username = StringField("Nombre de usuario: ")
-    password = PasswordField("Contraseña: ")
+    username = StringField("Nombre de usuario: ", validators = [DataRequired(), Length(min=4, max=25)])
+    password = PasswordField("Contraseña: ", validators = [DataRequired(), Length(min=6, max=40)])
     submit = SubmitField("Registrar: ")
 
 
@@ -111,7 +112,7 @@ def register():
     #         error = """Nombre de usuario debe tener entre 4 y 25 caracteres y la contraseña debe tener entre 6 y 40 caracteres.
     #         """  
     #         return render_template('auth/register.html', form = form, error = error)
-    # return render_template('auth/register.html', form = form)
+    return render_template('auth/register.html', form = form)
 
 #flask --app hello run (levantar servidor)
 #flask --app hello --debug run (levantar servidor con modo debug en el navegador)

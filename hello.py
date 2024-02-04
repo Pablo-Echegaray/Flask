@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for, request
 from markupsafe import escape
 from datetime import datetime
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
 
 app = Flask(__name__)
 
@@ -80,6 +82,13 @@ def hello_dinamic(name:str = None, age:int = None, email = None):
 @app.route('/code/<path:code>')
 def code(code):
     return f'<code>{escape(code)}<code>'
+
+# Crear formulario wtform
+class RegisterForm(FlaskForm):
+    username = StringField("Nombre de usuario: ")
+    password = PasswordField("Contraseña: ")
+    submit = SubmitField("Registrar: ")
+
 
 # Registrar usuario
 @app.route('/auth/register', methods = ['GET', 'POST'])
